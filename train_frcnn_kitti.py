@@ -33,14 +33,17 @@ def train_kitti():
 
     # TODO: the only file should to be change for other data to train
     cfg.model_path = './model/kitti_frcnn_last.hdf5'
-    cfg.simple_label_file = 'kitti_simple_label.txt'
+    # cfg.simple_label_file = 'kitti_simple_label.txt'
+    # 标注文件
+    cfg.simple_label_file = 'my_label.txt'
 
+    # 图片、分类、
     all_images, classes_count, class_mapping = get_data(cfg.simple_label_file)
 
     if 'bg' not in classes_count:
         classes_count['bg'] = 0
         class_mapping['bg'] = len(class_mapping)
-
+    # 最后添加一个类别为bg
     cfg.class_mapping = class_mapping
     with open(cfg.config_save_file, 'wb') as config_f:
         pickle.dump(cfg, config_f)

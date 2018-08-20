@@ -25,6 +25,12 @@ def get_weight_path():
 
 
 def get_img_output_length(width, height):
+    """
+    这个计算的应该是底层网络缩放后的大小
+    :param width:
+    :param height:
+    :return:
+    """
     def get_output_length(input_length):
         # zero_pad
         input_length += 6

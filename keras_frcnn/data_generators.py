@@ -38,6 +38,13 @@ def iou(a, b):
 
 
 def get_new_img_size(width, height, img_min_side=600):
+    """
+    图片缩放到最大600像素
+    :param width:
+    :param height:
+    :param img_min_side:
+    :return:
+    """
     if width <= height:
         f = float(img_min_side) / width
         resized_height = int(f * height)
@@ -77,13 +84,25 @@ class SampleSelector:
 
 
 def calc_rpn(C, img_data, width, height, resized_width, resized_height, img_length_calc_function):
+    """
+    计算RPN
+
+    :param C:
+    :param img_data:
+    :param width:
+    :param height:
+    :param resized_width:
+    :param resized_height:
+    :param img_length_calc_function:
+    :return:
+    """
+    # 生成9个anchors
     downscale = float(C.rpn_stride)
     anchor_sizes = C.anchor_box_scales
     anchor_ratios = C.anchor_box_ratios
     num_anchors = len(anchor_sizes) * len(anchor_ratios)
 
     # calculate the output map size based on the network architecture
-
     (output_width, output_height) = img_length_calc_function(resized_width, resized_height)
 
     n_anchratios = len(anchor_ratios)

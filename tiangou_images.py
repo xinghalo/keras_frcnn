@@ -21,7 +21,7 @@ print("获得"+str(len(ids))+"条数据")
 # 下载图片
 total = str(len(ids))
 for index, id in enumerate(ids):
-    if index > 4259:
+    if index > 37167:
         if not os.path.exists(IMG_PATH+'/'+categories[index]):
             os.mkdir(IMG_PATH+'/'+categories[index])
 
