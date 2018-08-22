@@ -110,7 +110,8 @@ def train_kitti():
     model_all.compile(optimizer='sgd', loss='mae')
 
     epoch_length = 1000
-    num_epochs = int(cfg.num_epochs)
+    # num_epochs = int(cfg.num_epochs)
+    num_epochs = 200
     iter_num = 0
 
     losses = np.zeros((epoch_length, 5))
