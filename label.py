@@ -135,7 +135,7 @@ class LabelTool():
         if not dbg:
             s = self.entry.get()
             self.parent.focus()
-            self.category = int(s)
+            self.category = s
         else:
             s = r'D:\workspace\python\labelGUI'
         ##        if not os.path.isdir(s):
@@ -144,9 +144,9 @@ class LabelTool():
         # get image list
 
         print
-        'self.category =%d' % (self.category)
+        'self.category =%s' % (self.category)
 
-        self.imageDir = os.path.join(r'/Users/xingoo/Desktop/product_images/', '%03d' % (self.category))
+        self.imageDir = os.path.join(r'/Users/xingoo/Desktop/images_v2/', '%s' % (self.category))
         print(self.imageDir)
         self.imageList = glob.glob(os.path.join(self.imageDir, '*.jpg'))
         if len(self.imageList) == 0:
@@ -162,12 +162,12 @@ class LabelTool():
         self.total = len(self.imageList)
 
         # set up output dir
-        self.outDir = os.path.join(r'/Users/xingoo/Desktop/labels/', '%03d' % (self.category))
+        self.outDir = os.path.join(r'/Users/xingoo/Desktop/labels/', '%s' % (self.category))
         if not os.path.exists(self.outDir):
             os.mkdir(self.outDir)
 
         # load example bboxes
-        self.egDir = os.path.join(r'/Users/xingoo/Desktop/brands/Examples/', '%03d' % (self.category))
+        self.egDir = os.path.join(r'/Users/xingoo/Desktop/Examples/', '%s' % (self.category))
         # if not os.path.exists(self.egDir):
         #   return
 

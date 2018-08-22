@@ -15,7 +15,7 @@ for category in os.listdir(PATH+'labels/'):
                 if len(lines) > 1:
                     #print(lines[1].strip())
                     x1,y1,x2,y2 = lines[1].strip().split(' ')
-                    image_path = PATH+'product_images/'+category+'/'+(product.split('.')[0]+'.jpg')
+                    image_path = PATH+'images_v2/'+category+'/'+(product.split('.')[0]+'.jpg')
                     img = cv2.imread(image_path)
                     h,w,_ = img.shape
                     #print(h)
@@ -30,6 +30,6 @@ for category in os.listdir(PATH+'labels/'):
 for line in labels:
     print(line)
 
-with open('/Users/xingoo/PycharmProjects/keras_frcnn/my_label.txt','w',encoding='utf-8') as f:
+with open('/Users/xingoo/PycharmProjects/keras_frcnn/my_label_v2.txt','w',encoding='utf-8') as f:
     for line in labels:
         f.write(line+'\n')
