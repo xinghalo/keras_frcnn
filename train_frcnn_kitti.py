@@ -35,7 +35,7 @@ def train_kitti():
     cfg.model_path = './model/kitti_frcnn_last.hdf5'
     # cfg.simple_label_file = 'kitti_simple_label.txt'
     # 标注文件
-    cfg.simple_label_file = 'my_label_v2.txt'
+    cfg.simple_label_file = 'my_label_v3.txt'
 
     # 图片、分类、
     all_images, classes_count, class_mapping = get_data(cfg.simple_label_file)
