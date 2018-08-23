@@ -8,7 +8,7 @@ lines = []
 with open('validate_photo.txt','r') as f:
     ps = f.readlines()
     for p in ps:
-        photos.add(p)
+        photos.add(p.strip('\n'))
 
 with open('photos/photos.txt','r') as f:
     lines = f.readlines()
