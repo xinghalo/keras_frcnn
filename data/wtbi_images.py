@@ -23,5 +23,5 @@ with open('photos/photos.txt','r') as f:
 
                     print(str(index) + "/" + total)
                     break
-                except Timeout as e:
+                except IOError as e:
                     print('超时'+url)
