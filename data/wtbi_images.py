@@ -19,9 +19,13 @@ for index, line in enumerate(lines):
         id, url = line.strip('\n').split(',')
         if id in photos:
             post_prefix = url.split('/')[-1].split('?')[0].split('.')[-1]
-            r = requests.get(url)
+            while True:
+                try:
+                    r = requests.get(url, timeout=1)
 
-            with open(IMG_PATH + id + '.' + post_prefix, 'wb') as f:
-                f.write(r.content)
+                    with open(IMG_PATH + id + '.' + post_prefix, 'wb') as f:
+                        f.write(r.content)
+                except IOError as e:
+                    print('超时'+url)
 
         print(str(index) + "/" + total)
