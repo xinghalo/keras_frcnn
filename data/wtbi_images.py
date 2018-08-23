@@ -1,5 +1,6 @@
 import os
 import requests
+from  requests.exceptions import Timeout
 import cv2
 
 IMG_PATH = '/Users/xingoo/Desktop/wtbi_images/'
@@ -22,5 +23,5 @@ with open('photos/photos.txt','r') as f:
 
                     print(str(index) + "/" + total)
                     break
-                except ZeroDivisionError as e:
-                    print(e.message())
+                except Timeout as e:
+                    print('超时'+url)
