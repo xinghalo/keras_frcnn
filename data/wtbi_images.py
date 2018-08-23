@@ -3,7 +3,7 @@ import requests
 
 IMG_PATH = '/Users/xingoo/Desktop/wtbi_images/'
 
-with open('/Users/xingoo/PycharmProjects/keras_frcnn/data/photos/photos.txt','r') as f:
+with open('photos/photos.txt','r') as f:
     lines = f.readlines()
     total = str(len(lines))
     for index, line in enumerate(lines):
