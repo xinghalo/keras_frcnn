@@ -2,11 +2,13 @@ import os
 import json
 
 labels = []
+ids = set()
 
 for file in os.listdir('/Users/xingoo/PycharmProjects/keras_frcnn/data/meta/json'):
-    print(file)
+
 
     if file.startswith('test_') or file.startswith('train_'):
+        print(file)
         type = ''
         if file.startswith('test_pairs_'):
             type = file.split('test_pairs_')[-1].split('.')[0]
@@ -28,7 +30,12 @@ for file in os.listdir('/Users/xingoo/PycharmProjects/keras_frcnn/data/meta/json
                 y2 = y1+h
 
                 labels.append(str(photo).zfill(9)+','+str(x1)+','+str(y1)+','+str(x2)+','+str(y2)+','+str(type))
+                ids.add(str(photo).zfill(9))
 print(len(labels))
 with open('/Users/xingoo/PycharmProjects/keras_frcnn/data/wtbi_label.txt','w') as f:
     for label in labels:
+        f.write(label+'\n')
+
+with open('/Users/xingoo/PycharmProjects/keras_frcnn/data/validate_photo.txt','w') as f:
+    for label in ids:
         f.write(label+'\n')
