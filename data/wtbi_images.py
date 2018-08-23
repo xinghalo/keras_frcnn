@@ -21,10 +21,11 @@ for index, line in enumerate(lines):
             post_prefix = url.split('/')[-1].split('?')[0].split('.')[-1]
             while True:
                 try:
-                    r = requests.get(url, timeout=1)
+                    r = requests.get(url, timeout=0.8)
 
                     with open(IMG_PATH + id + '.' + post_prefix, 'wb') as f:
                         f.write(r.content)
+                    break
                 except IOError as e:
                     print('超时'+url)
 
