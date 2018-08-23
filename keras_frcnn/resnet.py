@@ -240,12 +240,13 @@ def classifier_layers(x, input_shape, trainable=False):
 def rpn(base_layers, num_anchors):
     x = Convolution2D(512, (3, 3), padding='same', activation='relu', kernel_initializer='normal', name='rpn_conv1')(
         base_layers)
-
+    # 前面每个像素点都是512的向量，这里使用9个(1,1)的卷积核，针对每个像素点生成长度为9的向量，作为边框分类的判断
     x_class = Convolution2D(num_anchors, (1, 1), activation='sigmoid', kernel_initializer='uniform',
                             name='rpn_out_class')(x)
+    # 这里针对512的向量，使用4*9个(1,1)来对边框进行回归
     x_regr = Convolution2D(num_anchors * 4, (1, 1), activation='linear', kernel_initializer='zero',
                            name='rpn_out_regress')(x)
-
+    # 返回边框分类的向量和回归的向量
     return [x_class, x_regr, base_layers]
 
 

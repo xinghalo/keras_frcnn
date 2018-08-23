@@ -63,10 +63,14 @@ def train_kitti():
     print('Num train samples {}'.format(len(train_imgs)))
     print('Num val samples {}'.format(len(val_imgs)))
 
+    ###################### 数据的生成 #####################################
+
     data_gen_train = data_generators.get_anchor_gt(train_imgs, classes_count, cfg, nn.get_img_output_length,
                                                    K.image_dim_ordering(), mode='train')
     data_gen_val = data_generators.get_anchor_gt(val_imgs, classes_count, cfg, nn.get_img_output_length,
                                                  K.image_dim_ordering(), mode='val')
+
+    ###################### 网络模型的定义 #####################################
 
     if K.image_dim_ordering() == 'th':
         input_shape_img = (3, None, None)
@@ -77,14 +81,16 @@ def train_kitti():
     roi_input = Input(shape=(None, 4))
 
     # define the base network (resnet here, can be VGG, Inception, etc)
+    # 定义基本网络
     shared_layers = nn.nn_base(img_input, trainable=True)
 
     # define the RPN, built on the base layers
+    # 定义RPN网络
     num_anchors = len(cfg.anchor_box_scales) * len(cfg.anchor_box_ratios)
     rpn = nn.rpn(shared_layers, num_anchors)
-
+    # 定义分类网络
     classifier = nn.classifier(shared_layers, roi_input, cfg.num_rois, nb_classes=len(classes_count), trainable=True)
-
+    # rpn[:2]是class和regr信息
     model_rpn = Model(img_input, rpn[:2])
     model_classifier = Model([img_input, roi_input], classifier)
 
@@ -127,7 +133,7 @@ def train_kitti():
     vis = True
 
     for epoch_num in range(num_epochs):
-
+        # 显示动作条
         progbar = generic_utils.Progbar(epoch_length)
         print('Epoch {}/{}'.format(epoch_num + 1, num_epochs))
 
@@ -143,11 +149,12 @@ def train_kitti():
                     if mean_overlapping_bboxes == 0:
                         print('RPN is not producing bounding boxes that overlap'
                               ' the ground truth boxes. Check RPN settings or keep training.')
-
+                ###################### 训练第一个模型 rpn #####################################
                 X, Y, img_data = next(data_gen_train)
 
                 loss_rpn = model_rpn.train_on_batch(X, Y)
 
+                ###################### 训练第二个模型 cls #####################################
                 P_rpn = model_rpn.predict_on_batch(X)
 
                 result = roi_helpers.rpn_to_roi(P_rpn[0], P_rpn[1], cfg, K.image_dim_ordering(), use_regr=True,
@@ -216,6 +223,7 @@ def train_kitti():
                                 ('detector_cls', np.mean(losses[:iter_num, 2])),
                                 ('detector_regr', np.mean(losses[:iter_num, 3]))])
 
+                # 输出当前epoch的训练信息
                 if iter_num == epoch_length:
                     loss_rpn_cls = np.mean(losses[:, 0])
                     loss_rpn_regr = np.mean(losses[:, 1])

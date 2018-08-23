@@ -131,11 +131,11 @@ def predict_single_image(img_path, model_rpn, model_classifier_only, cfg, class_
             print('{} prob: {}'.format(b[0: 4], b[-1]))
     img = draw_boxes_and_label_on_image_cv2(img, class_mapping, boxes)
     print('Elapsed time = {}'.format(time.time() - st))
-    cv2.imshow('image', img)
+    #cv2.imshow('image', img)
     result_path = './cloth_results_images/{}.jpg'.format(os.path.basename(img_path).split('.')[0])
     print('result saved into ', result_path)
     cv2.imwrite(result_path, img)
-    cv2.waitKey(0)
+    #cv2.waitKey(0)
 
 
 def predict(args_):
