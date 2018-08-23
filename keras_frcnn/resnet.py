@@ -223,6 +223,7 @@ def nn_base(input_tensor=None, trainable=False):
 def classifier_layers(x, input_shape, trainable=False):
     # compile times on theano tend to be very high, so we use smaller ROI pooling regions to workaround
     # (hence a smaller stride in the region that follows the ROI pool)
+    # inpurt_shape (32,14,14,1024)
     if K.backend() == 'tensorflow':
         x = conv_block_td(x, 3, [512, 512, 2048], stage=5, block='a', input_shape=input_shape, strides=(2, 2),
                           trainable=trainable)
@@ -252,7 +253,8 @@ def rpn(base_layers, num_anchors):
 
 def classifier(base_layers, input_rois, num_rois, nb_classes=21, trainable=False):
     # compile times on theano tend to be very high, so we use smaller ROI pooling regions to workaround
-
+    # 如果是tf，就转成14*14
+    # todo input_rois是哪里来的？
     if K.backend() == 'tensorflow':
         pooling_regions = 14
         input_shape = (num_rois, 14, 14, 1024)
@@ -260,11 +262,13 @@ def classifier(base_layers, input_rois, num_rois, nb_classes=21, trainable=False
         pooling_regions = 7
         input_shape = (num_rois, 1024, 7, 7)
 
+    # 把inpurt_rois中的每个region强制换换成14*14大小,但是通道数有1024，（1,32,14,14,1024）
     out_roi_pool = RoiPoolingConv(pooling_regions, num_rois)([base_layers, input_rois])
     out = classifier_layers(out_roi_pool, input_shape=input_shape, trainable=True)
 
     out = TimeDistributed(Flatten())(out)
 
+    # 这里的nb_classes现在应该是4
     out_class = TimeDistributed(Dense(nb_classes, activation='softmax', kernel_initializer='zero'),
                                 name='dense_class_{}'.format(nb_classes))(out)
     # note: no regression target for bg class

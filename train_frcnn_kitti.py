@@ -96,6 +96,7 @@ def train_kitti():
 
     # this is a model that holds both the RPN and the classifier, used to load/save weights for the models
     model_all = Model([img_input, roi_input], rpn[:2] + classifier)
+    model_all.summary()
 
     try:
         print('loading weights from {}'.format(cfg.base_net_weights))

@@ -52,18 +52,20 @@ class RoiPoolingConv(Layer):
 
         img = x[0]
         rois = x[1]
-
+        print("--------------------------------")
+        K.print_tensor(rois, message="rois is: ")
         input_shape = K.shape(img)
 
         outputs = []
 
         for roi_idx in range(self.num_rois):
-
+            # 取出每个roi的四个坐标点，
             x = rois[0, roi_idx, 0]
             y = rois[0, roi_idx, 1]
             w = rois[0, roi_idx, 2]
             h = rois[0, roi_idx, 3]
-            
+
+            # 计算宽和高的像素值，切分成pool_size个section <-- 忽略，这都是针对theano来做的
             row_length = w / float(self.pool_size)
             col_length = h / float(self.pool_size)
 
@@ -97,6 +99,7 @@ class RoiPoolingConv(Layer):
                         outputs.append(pooled_val)
 
             elif self.dim_ordering == 'tf':
+                # 像素值 取整
                 x = K.cast(x, 'int32')
                 y = K.cast(y, 'int32')
                 w = K.cast(w, 'int32')
@@ -107,10 +110,10 @@ class RoiPoolingConv(Layer):
 
         final_output = K.concatenate(outputs, axis=0)
         final_output = K.reshape(final_output, (1, self.num_rois, self.pool_size, self.pool_size, self.nb_channels))
-
+        # 这里针对theano进行了维度重排，针对tensorflow没有改变
         if self.dim_ordering == 'th':
             final_output = K.permute_dimensions(final_output, (0, 1, 4, 2, 3))
         else:
             final_output = K.permute_dimensions(final_output, (0, 1, 2, 3, 4))
-
+        # 返回固定(1,32,14,14,1024)的数组
         return final_output
