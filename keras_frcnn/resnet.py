@@ -45,6 +45,17 @@ def get_img_output_length(width, height):
 
 
 def identity_block(input_tensor, kernel_size, filters, stage, block, trainable=True):
+    """
+    恒等快捷通道
+
+    :param input_tensor:    输入tensor
+    :param kernel_size:     默认值是3，主路中间卷积层的卷积核大小
+    :param filters:         实数列表，主路3个卷积核的数目
+    :param stage:           实数，当前阶段标签，用于生成层的名称
+    :param block:           'a','b'等，当前结构块的标签，用于生成层的名称
+    :param trainable:
+    :return:                tensor
+    """
     nb_filter1, nb_filter2, nb_filter3 = filters
 
     if K.image_dim_ordering() == 'tf':
@@ -67,6 +78,7 @@ def identity_block(input_tensor, kernel_size, filters, stage, block, trainable=T
     x = Convolution2D(nb_filter3, (1, 1), name=conv_name_base + '2c', trainable=trainable)(x)
     x = FixedBatchNormalization(axis=bn_axis, name=bn_name_base + '2c')(x)
 
+    # todo 维度不同如何相加？summary()之后看不到shape
     x = Add()([x, input_tensor])
     x = Activation('relu')(x)
     return x
@@ -106,6 +118,18 @@ def identity_block_td(input_tensor, kernel_size, filters, stage, block, trainabl
 
 
 def conv_block(input_tensor, kernel_size, filters, stage, block, strides=(2, 2), trainable=True):
+    """
+    投影快捷连接
+
+    :param input_tensor:
+    :param kernel_size:
+    :param filters:
+    :param stage:
+    :param block:
+    :param strides:
+    :param trainable:
+    :return:
+    """
     nb_filter1, nb_filter2, nb_filter3 = filters
     if K.image_dim_ordering() == 'tf':
         bn_axis = 3
@@ -193,9 +217,9 @@ def nn_base(input_tensor=None, trainable=False):
         bn_axis = 3
     else:
         bn_axis = 1
-
+    # padding (3,3)，保证7*7的卷积之后维度不变
     x = ZeroPadding2D((3, 3))(img_input)
-
+    # 这里的strides是(2,2)，高度和宽度都缩小了一半
     x = Convolution2D(64, (7, 7), strides=(2, 2), name='conv1', trainable=trainable)(x)
     x = FixedBatchNormalization(axis=bn_axis, name='bn_conv1')(x)
     x = Activation('relu')(x)

@@ -1,6 +1,6 @@
 import requests
 
-IMG_PATH = '/Users/xingoo/Desktop/wtbi_images/'
+IMG_PATH = '/data1/Users/xingoo/Desktop/wtbi_images/'
 print('begin')
 
 photos = set()
@@ -15,7 +15,7 @@ with open('photos/photos.txt','r') as f:
 
 total = str(len(lines))
 for index, line in enumerate(lines):
-    if index > 937:
+    if index > 6315:
         id, url = line.strip('\n').split(',')
         if id in photos:
             post_prefix = url.split('/')[-1].split('?')[0].split('.')[-1]
@@ -25,6 +25,8 @@ for index, line in enumerate(lines):
 
                     with open(IMG_PATH + id + '.' + post_prefix, 'wb') as f:
                         f.write(r.content)
+
+                    print('下载到图片:'+id + '.' + post_prefix)
                     break
                 except IOError as e:
                     print('超时'+url)
