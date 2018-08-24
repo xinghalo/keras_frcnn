@@ -29,6 +29,8 @@ def get_data(input_path):
                     filename = HOME_PATH+file
                     break
             # ---- ---- ---- ---- ---- ---- ----
+            if filename.find('.') == -1:
+                continue
 
             if class_name not in classes_count:
                 classes_count[class_name] = 1

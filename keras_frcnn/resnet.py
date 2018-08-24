@@ -217,14 +217,19 @@ def nn_base(input_tensor=None, trainable=False):
         bn_axis = 3
     else:
         bn_axis = 1
+
     # padding (3,3)，保证7*7的卷积之后维度不变
     x = ZeroPadding2D((3, 3))(img_input)
     # 这里的strides是(2,2)，高度和宽度都缩小了一半
     x = Convolution2D(64, (7, 7), strides=(2, 2), name='conv1', trainable=trainable)(x)
     x = FixedBatchNormalization(axis=bn_axis, name='bn_conv1')(x)
     x = Activation('relu')(x)
+    # 基于3*3的卷积，高度宽度再次缩小
     x = MaxPooling2D((3, 3), strides=(2, 2))(x)
 
+
+    # conv_block默认会在shortcutpath上加一个conv，使得维度改变
+    # identity_block 输入和输出的维度不变
     x = conv_block(x, 3, [64, 64, 256], stage=2, block='a', strides=(1, 1), trainable=trainable)
     x = identity_block(x, 3, [64, 64, 256], stage=2, block='b', trainable=trainable)
     x = identity_block(x, 3, [64, 64, 256], stage=2, block='c', trainable=trainable)
@@ -276,6 +281,15 @@ def rpn(base_layers, num_anchors):
 
 
 def classifier(base_layers, input_rois, num_rois, nb_classes=21, trainable=False):
+    """
+
+    :param base_layers:
+    :param input_rois:
+    :param num_rois:
+    :param nb_classes:  前面传过来的，样本数据里面有n个分类，然后加上一个bg，传到这里就是n+1
+    :param trainable:
+    :return:
+    """
     # compile times on theano tend to be very high, so we use smaller ROI pooling regions to workaround
     # 如果是tf，就转成14*14
     # todo input_rois是哪里来的？
@@ -287,6 +301,7 @@ def classifier(base_layers, input_rois, num_rois, nb_classes=21, trainable=False
         input_shape = (num_rois, 1024, 7, 7)
 
     # 把inpurt_rois中的每个region强制换换成14*14大小,但是通道数有1024，（1,32,14,14,1024）
+    # 针对每个预测的边框进行缩放
     out_roi_pool = RoiPoolingConv(pooling_regions, num_rois)([base_layers, input_rois])
     out = classifier_layers(out_roi_pool, input_shape=input_shape, trainable=True)
 

@@ -87,6 +87,8 @@ def train_kitti():
     # define the RPN, built on the base layers
     # 定义RPN网络
     num_anchors = len(cfg.anchor_box_scales) * len(cfg.anchor_box_ratios)
+    # 后面接一个全连接层，输出深度为512维度的特征map
+    # 然后接两个FC，分别用来作为anchors形状的分类和边框四个点的回归（x1,y1,x2,y2）
     rpn = nn.rpn(shared_layers, num_anchors)
     # 定义分类网络
     classifier = nn.classifier(shared_layers, roi_input, cfg.num_rois, nb_classes=len(classes_count), trainable=True)
@@ -155,7 +157,7 @@ def train_kitti():
 
                 loss_rpn = model_rpn.train_on_batch(X, Y)
 
-                ###################### 训练第二个模型 cls #####################################
+
                 P_rpn = model_rpn.predict_on_batch(X)
 
                 result = roi_helpers.rpn_to_roi(P_rpn[0], P_rpn[1], cfg, K.image_dim_ordering(), use_regr=True,
@@ -207,6 +209,8 @@ def train_kitti():
                     else:
                         sel_samples = random.choice(pos_samples)
 
+
+                ###################### 训练第二个模型 cls #####################################
                 loss_class = model_classifier.train_on_batch([X, X2[:, sel_samples, :]],
                                                              [Y1[:, sel_samples, :], Y2[:, sel_samples, :]])
 

@@ -31,7 +31,7 @@ class Config:
         # stride at the RPN (this depends on the network configuration)
         self.rpn_stride = 16
 
-        self.balanced_classes = False
+        self.balanced_classes = False # 是否平衡各个类
 
         # scaling the stdev
         self.std_scaling = 4.0
