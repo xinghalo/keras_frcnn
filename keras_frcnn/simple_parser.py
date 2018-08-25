@@ -46,18 +46,25 @@ def get_data(input_path):
 
                     img = cv2.imread(filename)
                     (rows, cols) = img.shape[:2]
-                    all_imgs[filename]['filepath'] = filename
-                    all_imgs[filename]['width'] = cols
-                    all_imgs[filename]['height'] = rows
-                    all_imgs[filename]['bboxes'] = []
-                    if np.random.randint(0, 6) > 0:
-                        all_imgs[filename]['imageset'] = 'trainval'
-                    else:
-                        all_imgs[filename]['imageset'] = 'test'
+                    # 有的图片下载为空，这里会报错
+                    try:
+                        all_imgs[filename]['filepath'] = filename
+                        all_imgs[filename]['width'] = cols
+                        all_imgs[filename]['height'] = rows
+                        all_imgs[filename]['bboxes'] = []
+                        if np.random.randint(0, 6) > 0:
+                            all_imgs[filename]['imageset'] = 'trainval'
+                        else:
+                            all_imgs[filename]['imageset'] = 'test'
+                    except AttributeError as e:
+                        print(filename)
+                        print(e.message())
 
-                all_imgs[filename]['bboxes'].append(
-                    {'class': class_name, 'x1': int(float(x1)), 'x2': int(float(x2)), 'y1': int(float(y1)),
-                     'y2': int(float(y2))})
+                # 这里发现有的图片下载下来是空的...需要提前判断一下
+                if filename in all_imgs:
+                    all_imgs[filename]['bboxes'].append(
+                        {'class': class_name, 'x1': int(float(x1)), 'x2': int(float(x2)), 'y1': int(float(y1)),
+                         'y2': int(float(y2))})
                 print('success '+str(index)+filename)
 
         all_data = []
