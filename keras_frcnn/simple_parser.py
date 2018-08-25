@@ -41,12 +41,11 @@ def get_data(input_path):
                         found_bg = True
                     class_mapping[class_name] = len(class_mapping)
 
-                if filename not in all_imgs:
-                    all_imgs[filename] = {}
+                img = cv2.imread(filename)
+                if img != None:
+                    if filename not in all_imgs:
+                        all_imgs[filename] = {}
 
-                    img = cv2.imread(filename)
-                    # 有的图片下载为空，这里会报错
-                    try:
                         (rows, cols) = img.shape[:2]
                         all_imgs[filename]['filepath'] = filename
                         all_imgs[filename]['width'] = cols
@@ -56,12 +55,8 @@ def get_data(input_path):
                             all_imgs[filename]['imageset'] = 'trainval'
                         else:
                             all_imgs[filename]['imageset'] = 'test'
-                    except AttributeError as e:
-                        print(filename)
-                        print(e.message())
 
-                # 这里发现有的图片下载下来是空的...需要提前判断一下
-                if filename in all_imgs:
+                    # 这里发现有的图片下载下来是空的...需要提前判断一下
                     all_imgs[filename]['bboxes'].append(
                         {'class': class_name, 'x1': int(float(x1)), 'x2': int(float(x2)), 'y1': int(float(y1)),
                          'y2': int(float(y2))})
