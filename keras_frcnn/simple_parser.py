@@ -42,7 +42,7 @@ def get_data(input_path):
                     class_mapping[class_name] = len(class_mapping)
 
                 img = cv2.imread(filename)
-                if img:
+                if type(img) != type(None):
                     if filename not in all_imgs:
                         all_imgs[filename] = {}
 
@@ -75,3 +75,10 @@ def get_data(input_path):
                 class_mapping[key_to_switch] = val_to_switch
 
         return all_data, classes_count, class_mapping
+
+if __name__ == '__main__':
+    img = cv2.imread('123')
+    print(img == None)
+    print(img != None)
+    print(type(img))
+    print(type(None))
