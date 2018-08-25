@@ -22,7 +22,7 @@ def get_data(input_path):
 
         print('Parsing annotation files')
 
-        for line in f:
+        for index,line in enumerate(f):
             line_split = line.strip().split(',')
             (filename, x1, y1, x2, y2, class_name) = line_split
 
@@ -61,7 +61,7 @@ def get_data(input_path):
                 all_imgs[filename]['bboxes'].append(
                     {'class': class_name, 'x1': int(float(x1)), 'x2': int(float(x2)), 'y1': int(float(y1)),
                      'y2': int(float(y2))})
-                print('success '+filename)
+                print('success '+str(index)+filename)
 
         all_data = []
         for key in all_imgs:
