@@ -363,6 +363,8 @@ def get_anchor_gt(all_img_data, class_count, C, img_length_calc_function, backen
                 x_img = cv2.resize(x_img, (resized_width, resized_height), interpolation=cv2.INTER_CUBIC)
 
                 try:
+                    # y_rpn_cls 前9位表示是否有效，后9位表示是否大于0.7
+                    # y_rpn_regr 前36位表示是否大于0.7，后36为是9个anchor扫描框
                     y_rpn_cls, y_rpn_regr = calc_rpn(C, img_data_aug, width, height, resized_width, resized_height,
                                                      img_length_calc_function)
                 except:

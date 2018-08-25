@@ -15,7 +15,7 @@ with open('photos/photos.txt','r') as f:
 
 total = str(len(lines))
 for index, line in enumerate(lines):
-    if index > 6315:
+    if index > 113438:
         id, url = line.strip('\n').split(',')
         if id in photos:
             post_prefix = url.split('/')[-1].split('?')[0].split('.')[-1]
