@@ -45,9 +45,9 @@ def get_data(input_path):
                     all_imgs[filename] = {}
 
                     img = cv2.imread(filename)
-                    (rows, cols) = img.shape[:2]
                     # 有的图片下载为空，这里会报错
                     try:
+                        (rows, cols) = img.shape[:2]
                         all_imgs[filename]['filepath'] = filename
                         all_imgs[filename]['width'] = cols
                         all_imgs[filename]['height'] = rows
