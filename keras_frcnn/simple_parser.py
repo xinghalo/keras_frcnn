@@ -12,11 +12,6 @@ def get_data(input_path):
     class_mapping = {}
 
     visualise = True
-    HOME_PATH = '/data1/Users/xingoo/Desktop/wtbi_images/'
-    files = os.listdir(HOME_PATH)
-    prefix_map = {}
-    for file in files:
-        prefix_map[file.split('.')[0]] = file
 
     with open(input_path, 'r') as f:
 
@@ -26,41 +21,37 @@ def get_data(input_path):
             line_split = line.strip().split(',')
             (filename, x1, y1, x2, y2, class_name) = line_split
 
-            if filename in prefix_map:
-                filename = HOME_PATH + prefix_map.get(filename)
+            if class_name not in classes_count:
+                classes_count[class_name] = 1
+            else:
+                classes_count[class_name] += 1
 
-                if class_name not in classes_count:
-                    classes_count[class_name] = 1
-                else:
-                    classes_count[class_name] += 1
+            if class_name not in class_mapping:
+                if class_name == 'bg' and not found_bg:
+                    print('Found class name with special name bg. Will be treated as a'
+                          ' background region (this is usually for hard negative mining).')
+                    found_bg = True
+                class_mapping[class_name] = len(class_mapping)
 
-                if class_name not in class_mapping:
-                    if class_name == 'bg' and not found_bg:
-                        print('Found class name with special name bg. Will be treated as a'
-                              ' background region (this is usually for hard negative mining).')
-                        found_bg = True
-                    class_mapping[class_name] = len(class_mapping)
 
+
+            if filename not in all_imgs:
+                all_imgs[filename] = {}
                 img = cv2.imread(filename)
-                if type(img) != type(None):
-                    if filename not in all_imgs:
-                        all_imgs[filename] = {}
+                (rows, cols) = img.shape[:2]
+                all_imgs[filename]['filepath'] = filename
+                all_imgs[filename]['width'] = cols
+                all_imgs[filename]['height'] = rows
+                all_imgs[filename]['bboxes'] = []
+                if np.random.randint(0, 6) > 0:
+                    all_imgs[filename]['imageset'] = 'trainval'
+                else:
+                    all_imgs[filename]['imageset'] = 'test'
 
-                        (rows, cols) = img.shape[:2]
-                        all_imgs[filename]['filepath'] = filename
-                        all_imgs[filename]['width'] = cols
-                        all_imgs[filename]['height'] = rows
-                        all_imgs[filename]['bboxes'] = []
-                        if np.random.randint(0, 6) > 0:
-                            all_imgs[filename]['imageset'] = 'trainval'
-                        else:
-                            all_imgs[filename]['imageset'] = 'test'
-
-                    # 这里发现有的图片下载下来是空的...需要提前判断一下
-                    all_imgs[filename]['bboxes'].append(
-                        {'class': class_name, 'x1': int(float(x1)), 'x2': int(float(x2)), 'y1': int(float(y1)),
-                         'y2': int(float(y2))})
-                print('success ' + str(index) + filename)
+            # 这里发现有的图片下载下来是空的...需要提前判断一下
+            all_imgs[filename]['bboxes'].append(
+                {'class': class_name, 'x1': int(float(x1)), 'x2': int(float(x2)), 'y1': int(float(y1)),
+                 'y2': int(float(y2))})
 
         all_data = []
         for key in all_imgs:
@@ -75,10 +66,3 @@ def get_data(input_path):
                 class_mapping[key_to_switch] = val_to_switch
 
         return all_data, classes_count, class_mapping
-
-if __name__ == '__main__':
-    img = cv2.imread('123')
-    print(img == None)
-    print(img != None)
-    print(type(img))
-    print(type(None))
