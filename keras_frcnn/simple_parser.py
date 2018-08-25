@@ -14,6 +14,9 @@ def get_data(input_path):
     visualise = True
     HOME_PATH = '/data1/Users/xingoo/Desktop/wtbi_images/'
     files = os.listdir(HOME_PATH)
+    prefix_map = {}
+    for file in files:
+        prefix_map[file.split('.')[0]] = file
 
     with open(input_path, 'r') as f:
 
@@ -23,44 +26,42 @@ def get_data(input_path):
             line_split = line.strip().split(',')
             (filename, x1, y1, x2, y2, class_name) = line_split
 
-            # ---- 根据filename读取真正的文件名 ----
-            for file in files:
-                if file.startswith(filename):
-                    filename = HOME_PATH+file
-                    break
-            # ---- ---- ---- ---- ---- ---- ----
-            if filename.find('.') == -1:
-                continue
+            if filename in prefix_map:
+                filename = HOME_PATH + prefix_map.get(filename)
 
-            if class_name not in classes_count:
-                classes_count[class_name] = 1
-            else:
-                classes_count[class_name] += 1
-
-            if class_name not in class_mapping:
-                if class_name == 'bg' and not found_bg:
-                    print('Found class name with special name bg. Will be treated as a'
-                          ' background region (this is usually for hard negative mining).')
-                    found_bg = True
-                class_mapping[class_name] = len(class_mapping)
-
-            if filename not in all_imgs:
-                all_imgs[filename] = {}
-
-                img = cv2.imread(filename)
-                (rows, cols) = img.shape[:2]
-                all_imgs[filename]['filepath'] = filename
-                all_imgs[filename]['width'] = cols
-                all_imgs[filename]['height'] = rows
-                all_imgs[filename]['bboxes'] = []
-                if np.random.randint(0, 6) > 0:
-                    all_imgs[filename]['imageset'] = 'trainval'
+                if class_name not in classes_count:
+                    classes_count[class_name] = 1
                 else:
-                    all_imgs[filename]['imageset'] = 'test'
+                    classes_count[class_name] += 1
 
-            all_imgs[filename]['bboxes'].append(
-                {'class': class_name, 'x1': int(float(x1)), 'x2': int(float(x2)), 'y1': int(float(y1)),
-                 'y2': int(float(y2))})
+                if class_name not in class_mapping:
+                    if class_name == 'bg' and not found_bg:
+                        print('Found class name with special name bg. Will be treated as a'
+                              ' background region (this is usually for hard negative mining).')
+                        found_bg = True
+                    class_mapping[class_name] = len(class_mapping)
+
+                if filename not in all_imgs:
+                    all_imgs[filename] = {}
+
+                    img = cv2.imread(filename)
+                    try:
+                        (rows, cols) = img.shape[:2]
+                        all_imgs[filename]['filepath'] = filename
+                        all_imgs[filename]['width'] = cols
+                        all_imgs[filename]['height'] = rows
+                        all_imgs[filename]['bboxes'] = []
+                        if np.random.randint(0, 6) > 0:
+                            all_imgs[filename]['imageset'] = 'trainval'
+                        else:
+                            all_imgs[filename]['imageset'] = 'test'
+                    except AttributeError as e:
+                        print(filename)
+
+                all_imgs[filename]['bboxes'].append(
+                    {'class': class_name, 'x1': int(float(x1)), 'x2': int(float(x2)), 'y1': int(float(y1)),
+                     'y2': int(float(y2))})
+                print('success '+filename)
 
         all_data = []
         for key in all_imgs:
