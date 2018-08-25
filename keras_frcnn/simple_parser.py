@@ -22,7 +22,7 @@ def get_data(input_path):
 
         print('Parsing annotation files')
 
-        for index,line in enumerate(f):
+        for index, line in enumerate(f):
             line_split = line.strip().split(',')
             (filename, x1, y1, x2, y2, class_name) = line_split
 
@@ -42,7 +42,7 @@ def get_data(input_path):
                     class_mapping[class_name] = len(class_mapping)
 
                 img = cv2.imread(filename)
-                if img != None:
+                if img:
                     if filename not in all_imgs:
                         all_imgs[filename] = {}
 
@@ -60,7 +60,7 @@ def get_data(input_path):
                     all_imgs[filename]['bboxes'].append(
                         {'class': class_name, 'x1': int(float(x1)), 'x2': int(float(x2)), 'y1': int(float(y1)),
                          'y2': int(float(y2))})
-                print('success '+str(index)+filename)
+                print('success ' + str(index) + filename)
 
         all_data = []
         for key in all_imgs:
@@ -75,4 +75,3 @@ def get_data(input_path):
                 class_mapping[key_to_switch] = val_to_switch
 
         return all_data, classes_count, class_mapping
-
