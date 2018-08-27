@@ -25,9 +25,9 @@ def train_kitti():
     # config for data argument
     cfg = config.Config()
 
-    cfg.use_horizontal_flips = True
-    cfg.use_vertical_flips = True
-    cfg.rot_90 = True
+    cfg.use_horizontal_flips = False
+    cfg.use_vertical_flips = False
+    cfg.rot_90 = False
     cfg.num_rois = 32
     cfg.base_net_weights = os.path.join('./model/', nn.get_weight_path())
 
