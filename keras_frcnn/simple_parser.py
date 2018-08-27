@@ -19,7 +19,7 @@ def get_data(input_path):
 
         for index, line in enumerate(f):
             line_split = line.strip().split(',')
-            (filename, x1, y1, x2, y2, class_name) = line_split
+            (filename, x1, y1, x2, y2, class_name, flag) = line_split
 
             if class_name not in classes_count:
                 classes_count[class_name] = 1
@@ -43,10 +43,11 @@ def get_data(input_path):
                 all_imgs[filename]['width'] = cols
                 all_imgs[filename]['height'] = rows
                 all_imgs[filename]['bboxes'] = []
-                if np.random.randint(0, 6) > 0:
-                    all_imgs[filename]['imageset'] = 'trainval'
-                else:
-                    all_imgs[filename]['imageset'] = 'test'
+                all_imgs[filename]['imageset'] = flag
+                # if np.random.randint(0, 6) > 0:
+                #     all_imgs[filename]['imageset'] = 'trainval'
+                # else:
+                #     all_imgs[filename]['imageset'] = 'test'
 
             # 这里发现有的图片下载下来是空的...需要提前判断一下
             all_imgs[filename]['bboxes'].append(
