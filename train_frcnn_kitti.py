@@ -118,9 +118,9 @@ def train_kitti():
                              metrics={'dense_class_{}'.format(len(classes_count)): 'accuracy'})
     model_all.compile(optimizer='sgd', loss='mae')
 
-    epoch_length = 1000
+    epoch_length = 100
     # num_epochs = int(cfg.num_epochs)
-    num_epochs = 200
+    num_epochs = 2000
     iter_num = 0
 
     losses = np.zeros((epoch_length, 5))
@@ -153,10 +153,14 @@ def train_kitti():
                         print('RPN is not producing bounding boxes that overlap'
                               ' the ground truth boxes. Check RPN settings or keep training.')
                 ###################### 训练第一个模型 rpn #####################################
+                # x 是图片
+                # Y 是 [分类，回归参数]
+                # 数据增广
+                # np.copy(x_img), [np.copy(y_rpn_cls), np.copy(y_rpn_regr)], img_data_aug
                 X, Y, img_data = next(data_gen_train)
 
+                # loss_rpn : [分类，回归参数]
                 loss_rpn = model_rpn.train_on_batch(X, Y)
-
 
                 P_rpn = model_rpn.predict_on_batch(X)
 

@@ -192,7 +192,7 @@ def predict(args_):
 def parse_args():
     parser = argparse.ArgumentParser()
     #parser.add_argument('--path', '-p', default='images/000010.png', help='image path')
-    parser.add_argument('--path', '-p', default='cloth_images/122999.jpg', help='image path')
+    parser.add_argument('--path', '-p', default='cloth_images/000001491.jpg', help='image path')
     return parser.parse_args()
 
 
